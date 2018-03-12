@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Loquela</title>
+    <link href="main.css" rel="stylesheet">
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script type=text/javascript src="js/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
+    <script type=text/javascript src="js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script type=text/javascript src="js/d3/d3.js"></script>
+    <script type=text/javascript src="js/d3-cloud/build/d3.layout.cloud.js"></script>
+    <script type=text/javascript src="index.js"></script>
+    <script>if (window.module) module = window.module;</script>
+</head>
+<body>
+<div id="welcome-page" class="centered">
+    <input type="button" id="upload-file-button" value="Upload JSON File" onclick="loadFileChoice();" class="ui-button ui-corner-all ui-widget">
+    <input type="button" id="create-file-button" value="Create Config File" onclick="loadConfigForm();" class="ui-button ui-corner-all ui-widget">
+</div>
+<div id="create-file-form">
+    <div class="config-form">
+        <h5>Required Parameters</h5>
+        <label for="create-file-source">Source file</label>
+        <input type="text" id="create-file-source"><br>
+        <label for="create-file-iterations">Iterations</label>
+        <input type="number" id="create-file-iterations" min="1" value="50"><br>
+        <label for="create-file-topics">Topics</label>
+        <input type="number" id="create-file-topics" min="3" value="10"><br>
+        <label for="create-file-output">Output name</label>
+        <input type="text" id="create-file-output">
+    </div>
+    <div class="config-form">
+        <h5>Stopword Options</h5>
+        <strong>Range Limits</strong>
+        <label for="create-file-upperlimit">Remove words that appear in more than</label>
+        <nobr><input type="number" id="create-file-upperlimit" min="0" max="100" value="90"> % of documents</nobr><br>
+        <label for="create-file-lowerlimit">Remove words that appear in fewer than</label>
+        <nobr><input type="number" id="create-file-lowerlimit" min="0" max="100" value="5"> % of documents</nobr><br>
+        <strong>Whitelist and Blacklist</strong><br>
+        <label for="create-file-whitelist">Whitelist</label>
+        <textarea id="create-file-whitelist"></textarea><br>
+        <label for="create-file-blacklist">Blacklist</label>
+        <textarea id="create-file-blacklist"></textarea><br>
+        <nobr><input type="checkbox" id="create-file-default-english-stopwords" value="true">Add default English stopwords</nobr>
+        <nobr><input type="checkbox" id="create-file-default-latin-stopwords" value="true">Add default Latin stopwords</nobr>
+        <nobr><input type="checkbox" id="create-file-default-bede-stopwords" value="true">Add Latin stopwords for Bede</nobr>
+    </div>
+    <div class="config-form">
+        <h5>Chunking Options</h5>
+        <input type="radio" name="chunking" value="number" id="chunking-number"
+               onclick="document.getElementById('create-file-number-documents').disabled = false;
+                        document.getElementById('create-file-length-documents').disabled = true;
+                        document.getElementById('create-file-split-string').disabled = true;"
+               checked>Number of documents
+        <input type="number" id="create-file-number-documents" min="1" value="20"><br>
+        <input type="radio" name="chunking" value="length" id="chunking-length"
+               onclick="document.getElementById('create-file-number-documents').disabled = true;
+                        document.getElementById('create-file-length-documents').disabled = false;
+                        document.getElementById('create-file-split-string').disabled = true;">Length of documents
+        <input type="number" id="create-file-length-documents" min="1" disabled><br>
+        <input type="radio" name="chunking" value="splitstring" id="chunking-splitstring"
+               onclick="document.getElementById('create-file-number-documents').disabled = true;
+                        document.getElementById('create-file-length-documents').disabled = true;
+                        document.getElementById('create-file-split-string').disabled = false;">Split string
+        <input type="text" id="create-file-split-string" disabled><br>
+        <input type="radio" name="chunking" value="csv" id="chunking-csv"
+               onclick="document.getElementById('create-file-number-documents').disabled = true;
+                        document.getElementById('create-file-length-documents').disabled = true;
+                        document.getElementById('create-file-split-string').disabled = true;"
+               checked>Using pre-chunked CSV file
+    </div>
+    <div class="config-form">
+        <h5>Hyperparameters</h5>
+        <label for="create-file-alpha">Alpha</label>
+        <input type="number" id="create-file-alpha" min="0" max="1" step="0.1" value="0.8"><br>
+        <label for="create-file-beta">Beta</label>
+        <input type="number" id="create-file-beta" min="0" max="1" step="0.1" value="0.8"><br>
+    </div>
+    <div style="float: right; margin-top: 2em;">
+        <button class="ui-corner-all ui-widget ui-button" onclick="reloadMainMenu();" >Main Menu</button>
+        <input type="submit" value="Create config file" onclick="createConfigFile();" class="ui-widget ui-button ui-corner-all">
+    </div>
+</div>
+<div id="file-upload" class="centered">
+
+        <label id="json-file-label" for="json-file" class="ui-widget ui-corner-all ui-button">Browse</label>
+        <input type="file" id="json-file"><br>
+        <nobr>
+            <button id="json-file-main-menu" class="ui-button ui-widget ui-corner-all" onclick="reloadMainMenu();">Main Menu</button>
+            <input type="button" id="upload" value="Upload" onclick="loadFile();" class="ui-button ui-corner-all ui-widget">
+        </nobr>
+</div>
+<div id="progressbar" class="centered">
+    Loading...
+</div>
+<div id="tabs">
+    <ul>
+        <li><a href="#tab-1">Metadata</a></li>
+        <li><a href="#tab-2">Heat Map</a></li>
+        <li><a href="#tab-3">Annotated Text</a></li>
+        <li><a href="#tab-4">Word Cloud</a></li>
+    </ul>
+    <div style="position: fixed; bottom: 0; left: 0;">
+        <button class="ui-widget ui-button ui-corner-all float-left" onclick="reloadMainMenu()">Main Menu</button>
+    </div>
+    <div id="tab-1">
+        <h2>Metadata</h2>
+        <div>
+            <label><strong>Dataset: </strong></label> <label id="dataset"></label><br><br>
+            <label><strong>Topics: </strong></label> <label id="topics"></label><br>
+            <label><strong>Iterations: </strong></label> <label id="iterations"></label><br><br>
+            <label><strong>α : </strong></label> <label id="alpha"></label><br>
+            <label><strong>β : </strong></label> <label id="beta"></label><br><br>
+        </div>
+        <div>
+            <nobr>
+                <button id="create-nickname">Nickname topic</button>
+                <button id="save-nicknames" class="ui-button ui-corner-all ui-widget" onclick="saveNicknames();">Save nicknames</button>
+                <button id="view-stopwords">View stopwords</button>
+            </nobr>
+        </div>
+        <div id="metadata-topic-preview">
+            <select id="metadata-topic-select" class="styled-select slate">
+                <!-- this select tag will be filled with an <option> for each topic-->
+            </select>
+            <p id="metadata-topic-preview-text" class="scrollable"></p></div>
+    </div>
+    <div class="padLeft50" id="tab-2">
+        <h2>Heat Map</h2>
+        <div id="options">
+            <input id="smoothingBox" type="checkbox" checked>
+            <p class=inline>Smoothing: </p>
+            <select id="smoothingSelect" class="styled-select slate">
+                <option>5</option>
+                <option selected>10</option>
+                <option>15</option>
+                <option>20</option>
+                <option>25</option>
+                <option>30</option>
+                <option>35</option>
+                <option>40</option>
+                <option>45</option>
+                <option>50</option>
+            </select>
+        </div>
+        <div id="heatmap">
+            <div>
+                <select class="bottomMargin styled-select slate" name="heatmap1Menu" id="heatmap1Menu">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+                <h4 class=inline id="topicLabel1"></h4>
+            </div>
+            <svg id="heatmapSVG1"></svg>
+            <div>
+                <select class="bottomMargin styled-select slate" name="heatmap2Menu" id="heatmap2Menu">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+                <h4 class=inline id="topicLabel2"></h4>
+            </div>
+            <svg id="heatmapSVG2"></svg>
+            <div>
+                <select class="bottomMargin styled-select slate" name="heatmap3Menu" id="heatmap3Menu">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+                <h4 class=inline id="topicLabel3"></h4>
+            </div>
+            <svg id="heatmapSVG3"></svg>
+        </div>
+    </div>
+    <div id="tab-3">
+            <div style="display: grid;">
+                <div style="grid-row: 1">
+            <div id = "an-text-title">
+             <h2 style="grid-row: 1">Annotated Text</h2>
+            </div>
+            <div id = "selector-div" class="margin-15">
+                <select name="an-text-topic-select" id="an-text-topic-select-1" value="-2" onchange="onAnTextTopicSelect();" class="styled-select slate">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+                <select name="an-text-topic-select" id="an-text-topic-select-2" value="-2" onchange="onAnTextTopicSelect();" class="styled-select slate">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+                <select name="an-text-topic-select" id="an-text-topic-select-3" value="-2" onchange="onAnTextTopicSelect();" class="styled-select slate">
+                    <!-- this select tag will be filled with an <option> for each topic-->
+                </select>
+            </div>
+                    <div class="margin-15"><input id="check-highlight" type="checkbox" checked> <label for="check-highlight">Highlight Topic on Mouseover</label> </div>
+                    <div class="margin-15" style="position:relative; z-index: 1500; background-color:white; padding-bottom:10px;">
+                        <label for="an-text-scrollbar-select">Scrollbar topic </label><select name="an-text-scrollbar-select" id="an-text-scrollbar-select" class="styled-select slate"></select>
+                    </div>    
+                    <div class="scrollable margin-15 top-up-50">
+                        <div id="an-text-body" style="padding-top:45px"></div>
+                    </div>
+                    <div class="text-centered top-up-50" style="display: block;" id="an-text-nav">
+                    <nobr>
+                        <button class="ui-button ui-widget ui-corner-all" onclick="pageLeft();"><</button>
+                        <div id="page-num-div">
+                            <h5 id="page-number"></h5>
+                        </div>
+                        <button class="ui-button ui-widget ui-corner-all" onclick="pageRight();">></button>
+                        <button id = "jumpTrigger" class="ui-button ui-widget ui-corner-all" onclick="jumpPage()">Jump to</button>
+                        <input style="position:relative; top:-6px" type="number" id="jumpNum" value="">
+                    </nobr>
+                    </div>
+            </div>
+                <div id="an-text-scrollbar" style="grid-row: 1; min-width: 50px;"><svg id="heatmapSVG4" style="padding-top: 2em; float: right;"></svg></div>
+
+            </div>
+
+    </div>
+    <div id="tab-4">
+        <h2>Word Cloud</h2>
+        <select id="word-cloud-topic-select" class="styled-select slate">
+        </select>
+        </select>
+        <input type="button" id="resize-button" value="Resize" onclick="resizeWordCloud();" class="ui-button ui-corner-all ui-widget" style="margin-bottom: 0;">
+        <div id="word-cloud">
+        </div>
+    </div>
+
+<div id="nickname-dialog-form">
+    <form>
+        <fieldset>
+            <label for="nickname-input"></label>
+            <input type="text" name="nickname" id="nickname-input" value="" class="text ui-widget-content ui-corner-all">
+            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+    </form>
+</div>
+<div id="stopwords-dialog">
+    <!-- this div will be filled with the stopword list-->
+</div>
+</div>
+</body>
+</html>

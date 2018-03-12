@@ -1,0 +1,288 @@
+@import url("js/jquery-ui-1.12.1.custom/jquery-ui.css");
+
+:focus {outline:0 !important;}
+
+html {
+    overflow: hidden;
+}
+
+#webview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: inline-flex !important;
+}
+
+
+.ui-widget.ui-widget-content{
+    border: none;
+}
+
+.ui-button {
+    margin-bottom: 1em;
+}
+
+.ui-tabs{
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+.ui-tabs-vertical .ui-tabs-nav {
+    padding: .2em .1em 100em .2em;
+    float: left;
+    width: 10em;
+    height: 100%;
+}
+
+.ui-tabs-vertical .ui-tabs-nav li {
+    clear: left;
+    width: 100%;
+    /*border-bottom-width: 1px !important;*/
+    border-right-width: 0 !important;
+    /*margin: 0 -1px .2em 0;*/
+    height: 120px;
+}
+
+.ui-tabs-vertical .ui-tabs-nav li a {
+    display:block;
+    width: 80%;
+    height: 100px;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 1em;
+}
+
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active {
+    padding-bottom: 0;
+    padding-right: .1em;
+    border-right-width: 1px;
+}
+
+.ui-tabs-vertical .ui-tabs-panel {
+    padding: 1em;
+    height: 100%;
+    overflow: hidden;
+}
+
+.styled-select {
+    background: #e6e6e6 url("js/jquery-ui-1.12.1.custom/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+    height: 29px;
+    overflow: hidden;
+}
+
+.styled-select.slate {
+    background: #e6e6e6 url("js/jquery-ui-1.12.1.custom/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+    height: 34px;
+    border-radius: 4px;
+    padding: .4em 1em;
+    color: #555555;
+    border: 1px solid #d3d3d3;
+}
+
+.styled-select.slate select {
+    border: 1px solid #d3d3d3;
+    font-size: 16px;
+    height: 34px;
+    width: 268px;
+}
+
+
+/* Tooltip styles developed by Chris Bracco*/
+[data-tooltip] {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+    visibility: hidden;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+    position: absolute;
+    z-index: 2000;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    padding: 7px;
+    width: 160px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #000;
+    background-color: hsla(0, 0%, 20%, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+    position: absolute;
+    z-index:2000;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    border-top: 5px solid #000;
+    border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+    visibility: visible;
+    z-index: 2000;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.scrollable {
+    overflow: scroll;
+}
+
+.text-centered {
+    text-align: center;
+}
+
+.margin-15 {
+    display: block;
+    margin: 15px 0 15px 0
+}
+
+.float-left {
+    float:left;
+    margin: 1em;
+}
+
+.top-up-50 {
+    position: relative;
+    top: -45px;
+}
+
+.inline {
+    display:inline;
+}
+
+.bottomMargin {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.config-form {
+    display: inline-grid;
+    padding: 5px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+input[type="number"] {
+    width: 50px;
+}
+
+#tabs {
+    display: none;
+    margin: -.5em;
+}
+
+#progressbar {
+    display: none;
+    width: 80%;
+}
+
+#welcome-page {
+    display: block;
+}
+
+#file-upload {
+    display: none;
+}
+#create-file-form {
+    display: none;
+}
+
+#ui-id-4 {
+    padding-bottom: 0;
+}
+
+#word-cloud {
+    height: 80%;
+    width: 100%;
+}
+
+#an-text-scrollbar {
+    float: right;
+    display: inline;
+}
+
+#an-text-body {
+    height: 300px;
+    width: 90%;
+    float: left;
+    display: block;
+    z-index: 2000;
+}
+
+#an-text-nav {
+    display: inline;
+    vertical-align: center;
+}
+
+#json-file-label {
+    width: 279px;
+}
+
+#json-file-main-menu{
+    width: 180px;
+}
+
+#upload {
+    width: 130px;
+    float: right;
+}
+
+textarea {
+    resize: vertical;
+    overflow: scroll;
+    min-height: 5em;
+}
+
+#page-num-div {
+    display: inline-block;
+    width: 15em;
+}
+
+#page-number {
+    position: relative;
+    top: -0.5em;
+}
+
