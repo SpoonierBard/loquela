@@ -1,0 +1,6 @@
+[submodule "LDA"]
+	path = LDA
+	url = https://github.com/SamWiseman/latin
+[submodule "visualization-tool"]
+	path = visualization-tool
+	url = https://github.com/SpoonierBard/electron-bede
