@@ -6,7 +6,7 @@ Loquela is an implementation of the LDA topic modeling algorithm, paired with a 
 
 **LDA**: a directory containing LDA.py, some sample topic models, and other topic-modeling-related files.
 
-**visulaization-tool**: a directory containing the Electron-packaged visualization tool for LDA outputs.
+**visualization-tool**: a directory containing the Electron-packaged visualization tool for LDA outputs.
 
 ## Getting Started
 
